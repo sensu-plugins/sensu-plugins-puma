@@ -38,7 +38,6 @@ Gem::Specification.new do |s|
   s.version                = SensuPluginsPuma::Version::VER_STRING
 
   s.add_runtime_dependency 'puma',         '2.11.3'
-  s.add_runtime_dependency 'json',         '1.8.2'
   s.add_runtime_dependency 'sensu-plugin', '1.1.0'
 
   s.add_development_dependency 'codeclimate-test-reporter', '~> 0.4'
