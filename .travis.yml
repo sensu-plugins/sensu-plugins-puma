@@ -16,13 +16,15 @@ notifications:
     on_failure: always
 script:
 - bundle exec rake default
+- gem build sensu-plugins-puma.gemspec
+- gem install sensu-plugins-puma-*.gem
 deploy:
   provider: rubygems
   api_key:
-    secure: S5qrzQU6Xh8VB7c1x/n4jjSMZtSwGJUSgH6xxUtQq+aLmRPF2GRMv2xQ3R1/dul42zjc60IMaL9yHtOrPR/wNqK7gLAlJTnuiJg5s9/+OoriZL68DY3BY4ezedzeUfCfOM9BWE5lQocsoro5z3bEqNApDYgo3ff254H64uyEHTU=
+    secure: F1pgqj6ph748dkOwXGK2PKiTo0MNbaz/+XeI/5lT3OZelGsQQ4FTxTZ6LHe8O7Ge4zF+1bhxATaloXI1YVnYa1XqpawjJEcVwicU6WFdlJJkySm91xdI+3nBL7KBz4PiI0II3F/PXkmH8pjv2s2FbhDEkBwFiWTt5azqVYunZ6Y=
   gem: sensu-plugins-puma
   on:
-    tags: true
+    ags: true
     all_branches: true
     rvm: 1.9.3
     rvm: 2.0
