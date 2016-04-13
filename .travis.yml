@@ -24,7 +24,7 @@ deploy:
     secure: F1pgqj6ph748dkOwXGK2PKiTo0MNbaz/+XeI/5lT3OZelGsQQ4FTxTZ6LHe8O7Ge4zF+1bhxATaloXI1YVnYa1XqpawjJEcVwicU6WFdlJJkySm91xdI+3nBL7KBz4PiI0II3F/PXkmH8pjv2s2FbhDEkBwFiWTt5azqVYunZ6Y=
   gem: sensu-plugins-puma
   on:
-    ags: true
+    tags: true
     all_branches: true
     rvm: 1.9.3
     rvm: 2.0
