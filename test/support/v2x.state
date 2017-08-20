@@ -1,0 +1,31 @@
+---
+pid: 11305
+config: !ruby/object:Puma::Configuration
+  cli_options: 
+  conf: 
+  options:
+    :min_threads: 2
+    :max_threads: 4
+    :quiet: false
+    :debug: false
+    :binds:
+    - unix:///app/puma.sock
+    :workers: 2
+    :daemon: false
+    :mode: :http
+    :before_fork:
+    - !ruby/object:Proc {}
+    :worker_timeout: 60
+    :worker_boot_timeout: 60
+    :worker_shutdown_timeout: 30
+    :environment: development
+    :redirect_stdout: "/app/log/puma.stdout.log"
+    :redirect_stderr: "/app/log/puma.stderr.log"
+    :redirect_append: true
+    :pidfile: "/app/tmp/pids/puma.pid"
+    :state: tmp/puma.state
+    :preload_app: true
+    :control_url: unix:///app/pumactl.sock
+    :control_auth_token: 'abcde'
+    :config_file: config/puma.rb
+    :tag: core

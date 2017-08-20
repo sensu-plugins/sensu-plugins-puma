@@ -1,0 +1,4 @@
+---
+pid: 28383
+control_url: unix:///app/pumactl.sock
+control_auth_token: '123456'
