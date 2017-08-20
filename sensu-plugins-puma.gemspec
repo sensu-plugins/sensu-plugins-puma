@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.test_files             = s.files.grep(%r{^(test|spec|features)/})
   s.version                = SensuPluginsPuma::Version::VER_STRING
 
-  s.add_runtime_dependency 'puma',         '2.11.3'
   s.add_runtime_dependency 'sensu-plugin', '~> 1.2'
 
   s.add_development_dependency 'bundler',                   '~> 1.7'
