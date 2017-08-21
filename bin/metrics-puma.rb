@@ -29,8 +29,7 @@
 require 'sensu-plugin/metric/cli'
 
 require 'json'
-require 'socket'
-require 'yaml'
+require 'sensu-plugins-puma'
 
 class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
   option :scheme,
@@ -53,51 +52,44 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
          description: 'The control_url the puma control server is listening on',
          long: '--control-url PATH'
 
-  def control_auth_token
-    @control_auth_token ||= (config[:control_auth_token] || puma_options[:control_auth_token])
-  end
-
-  def control_url
-    @control_url ||= (config[:control_url] || puma_options[:control_url])
-  end
-
-  def puma_options
-    @puma_options ||= begin
-      return nil unless File.exist?(config[:state_file])
-      state = load_puma_state(config[:state_file])
-
-      if state.has_key?('config')
-        # state is < v3.0.0
-        opts = state['config']['options']
-        {control_url: opts[:control_url], control_auth_token: opts[:control_auth_token]}
-      else
-        # state is >= v3.0.0
-        {control_url: state['control_url'], control_auth_token: state['control_auth_token']}
-      end
-    end
-  end
-
-  def puma_stats
-    stats = Socket.unix(control_url.gsub('unix://', '')) do |socket|
-      socket.print("GET /stats?token=#{control_auth_token} HTTP/1.0\r\n\r\n")
-      socket.read
-    end
-
-    JSON.parse(stats.split("\r\n").last)
+  def puma_ctl
+    @puma_ctl ||= PumaCtl.new(
+      state_file: config[:state_file],
+      control_auth_token: config[:control_auth_token],
+      control_url: config[:control_url]
+    )
   end
 
   def run
-    puma_stats.map do |k, v|
-      output "#{config[:scheme]}.#{k}", v
+    timestamp = Time.now.to_i
+    stats = puma_ctl.stats
+    worker_status = stats.delete("worker_status")
+
+    if worker_status
+      stats = parse_worker_stats(stats, worker_status)
+    end
+    
+    stats.map do |k, v|
+      output "#{config[:scheme]}.#{k}", v, timestamp
     end
     ok
   end
 
   private
+  def parse_worker_stats(stats, worker_status)
+    backlog, running = 0, 0
+    worker_status.each do |worker|
+      idx = worker.delete("index")
+      last_status = worker.delete("last_status")
+      backlog += (worker["backlog"] = last_status["backlog"])
+      running += (worker["running"] = last_status["running"])
+      worker.map do |k, v|
+        stats["worker.#{idx}.#{k}"] = v
+      end
+    end
 
-  def load_puma_state(path)
-    raw = File.read(path)
-    sanitized = raw.gsub(/!ruby\/object:.*$/, '')
-    YAML.load(sanitized)
+    stats["backlog"] = backlog
+    stats["running"] = running
+    stats
   end
 end
