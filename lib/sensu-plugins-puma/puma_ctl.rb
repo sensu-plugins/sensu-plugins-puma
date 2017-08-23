@@ -35,6 +35,10 @@ class PumaCtl
     end
   end
 
+  def gc_stats
+    send_socket_command('gc-stats')
+  end
+
   def stats
     send_socket_command('stats')
   end
