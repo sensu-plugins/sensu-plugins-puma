@@ -4,16 +4,16 @@ require 'sensu-plugins-puma/puma_ctl'
 require 'socket'
 
 describe PumaCtl do
-  subject(:puma_ctl) {PumaCtl.new(state_file: state_file_path, control_auth_token: control_auth_token, control_url: control_url)}
-  let(:control_auth_token) {nil}
-  let(:control_url) {nil}
-  let(:state_file_path) {File.join(File.dirname(__FILE__), "../support/v#{version}.state")}
-  let(:version) {nil}
+  subject(:puma_ctl) { PumaCtl.new(state_file: state_file_path, control_auth_token: control_auth_token, control_url: control_url) }
+  let(:control_auth_token) { nil }
+  let(:control_url) { nil }
+  let(:state_file_path) { File.join(File.dirname(__FILE__), "../support/v#{version}.state") }
+  let(:version) { nil }
 
   context 'configuration' do
     context 'with control options' do
-      let(:control_auth_token) {'123'}
-      let(:control_url) {'unix:///some/path'}
+      let(:control_auth_token) { '123' }
+      let(:control_url) { 'unix:///some/path' }
 
       it 'accepts a `control_auth_token`' do
         expect(puma_ctl.control_auth_token).to eq('123')
@@ -24,38 +24,38 @@ describe PumaCtl do
       end
     end
 
-    context "with a < v3.0.0 state file" do
-      let(:version) {'2x'}
+    context 'with a < v3.0.0 state file' do
+      let(:version) { '2x' }
 
-      it "parses correctly" do
+      it 'parses correctly' do
         expect(puma_ctl.control_auth_token).to eq('abcde')
         expect(puma_ctl.control_url).to eq('unix:///app/pumactl.sock')
       end
     end
 
-    context "with a >= v3.0.0 state file" do
-      let(:version) {'3x'}
+    context 'with a >= v3.0.0 state file' do
+      let(:version) { '3x' }
 
-      it "parses correctly" do
+      it 'parses correctly' do
         expect(puma_ctl.control_auth_token).to eq('123456')
         expect(puma_ctl.control_url).to eq('unix:///app/pumactl.sock')
       end
     end
   end
 
-  describe "#gc_stats" do
-    let(:control_auth_token) {'123'}
-    let(:state_file_path) {nil}
-    let(:socket) {spy('socket')}
+  describe '#gc_stats' do
+    let(:control_auth_token) { '123' }
+    let(:state_file_path) { nil }
+    let(:socket) { spy('socket') }
 
     before do
-      allow(socket).to receive(:read).and_return(%Q( HTTP\/1.1 200 OK\r\n{"heap_used": 1516}))
+      allow(socket).to receive(:read).and_return(%( HTTP\/1.1 200 OK\r\n{"heap_used": 1516}))
       allow(Socket).to receive(:tcp).and_yield(socket)
       allow(Socket).to receive(:unix).and_yield(socket)
     end
 
     context 'with a TCP control url' do
-      let(:control_url) {'tcp://192.1.1.25:9191'}
+      let(:control_url) { 'tcp://192.1.1.25:9191' }
 
       it 'connects to the TCP socket' do
         puma_ctl.gc_stats
@@ -68,12 +68,12 @@ describe PumaCtl do
       end
 
       it 'returns the JSON socket response as a hash' do
-        expect(puma_ctl.gc_stats).to eq("heap_used" => 1516)
+        expect(puma_ctl.gc_stats).to eq('heap_used' => 1516)
       end
     end
 
     context 'with a UNIX socket control url' do
-      let(:control_url) {'unix:///some/path'}
+      let(:control_url) { 'unix:///some/path' }
 
       it 'connects to the socket' do
         puma_ctl.gc_stats
@@ -86,25 +86,24 @@ describe PumaCtl do
       end
 
       it 'returns the JSON socket response as a hash' do
-        expect(puma_ctl.gc_stats).to eq("heap_used" => 1516)
+        expect(puma_ctl.gc_stats).to eq('heap_used' => 1516)
       end
     end
-
   end
 
-  describe "#stats" do
-    let(:control_auth_token) {'123'}
-    let(:state_file_path) {nil}
-    let(:socket) {spy('socket')}
+  describe '#stats' do
+    let(:control_auth_token) { '123' }
+    let(:state_file_path) { nil }
+    let(:socket) { spy('socket') }
 
     before do
-      allow(socket).to receive(:read).and_return(%Q( HTTP\/1.1 200 OK\r\n{"running": 0}))
+      allow(socket).to receive(:read).and_return(%( HTTP\/1.1 200 OK\r\n{"running": 0}))
       allow(Socket).to receive(:tcp).and_yield(socket)
       allow(Socket).to receive(:unix).and_yield(socket)
     end
 
     context 'with a TCP control url' do
-      let(:control_url) {'tcp://192.1.1.25:9191'}
+      let(:control_url) { 'tcp://192.1.1.25:9191' }
 
       it 'connects to the TCP socket' do
         puma_ctl.stats
@@ -117,12 +116,12 @@ describe PumaCtl do
       end
 
       it 'returns the JSON socket response as a hash' do
-        expect(puma_ctl.stats).to eq("running" => 0)
+        expect(puma_ctl.stats).to eq('running' => 0)
       end
     end
 
     context 'with a UNIX socket control url' do
-      let(:control_url) {'unix:///some/path'}
+      let(:control_url) { 'unix:///some/path' }
 
       it 'connects to the socket' do
         puma_ctl.stats
@@ -135,10 +134,8 @@ describe PumaCtl do
       end
 
       it 'returns the JSON socket response as a hash' do
-        expect(puma_ctl.stats).to eq("running" => 0)
+        expect(puma_ctl.stats).to eq('running' => 0)
       end
     end
-
   end
-
 end
