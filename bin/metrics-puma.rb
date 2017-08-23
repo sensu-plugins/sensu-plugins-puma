@@ -52,6 +52,12 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
          description: 'The control_url the puma control server is listening on',
          long: '--control-url PATH'
 
+  option :gc_stats,
+         description: 'Collect GC stats. Only available for Puma >= v3.10.0',
+         long: '--gc-stats',
+         boolean: true,
+         default: false
+
   def puma_ctl
     @puma_ctl ||= PumaCtl.new(
       state_file: config[:state_file],
@@ -63,20 +69,32 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
   def run
     timestamp = Time.now.to_i
     stats = puma_ctl.stats
+    metrics = {}
     worker_status = stats.delete("worker_status")
 
     if worker_status
-      stats = parse_worker_stats(stats, worker_status)
+      metrics = parse_worker_stats(metrics, worker_status)
     end
+
+    metrics.merge!(stats)
+
+    metrics = parse_gc_stats(metrics, puma_ctl.gc_stats) if config[:gc_stats]
     
-    stats.map do |k, v|
+    metrics.map do |k, v|
       output "#{config[:scheme]}.#{k}", v, timestamp
     end
     ok
   end
 
   private
-  def parse_worker_stats(stats, worker_status)
+  def parse_gc_stats(metrics, gc_stats)
+    gc_stats.map do |k, v|
+      metrics["gc.#{k}"] = v
+    end
+    metrics
+  end
+
+  def parse_worker_stats(metrics, worker_status)
     backlog, running = 0, 0
     worker_status.each do |worker|
       idx = worker.delete("index")
@@ -84,12 +102,12 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
       backlog += (worker["backlog"] = last_status["backlog"])
       running += (worker["running"] = last_status["running"])
       worker.map do |k, v|
-        stats["worker.#{idx}.#{k}"] = v
+        metrics["worker.#{idx}.#{k}"] = v
       end
     end
 
-    stats["backlog"] = backlog
-    stats["running"] = running
-    stats
+    metrics["backlog"] = backlog
+    metrics["running"] = running
+    metrics
   end
 end

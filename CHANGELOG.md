@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- Support for Puma v3 state files
+- Parsing of stats output with multiple workers
+- Ability to pass `--control-url` and `--auth-token` directly instead of state file
+- Support for connecting to control servers running on TCP ports
+
+### Removed
+- Dependency on `puma`
 
 ## [1.0.0] - 2017-06-25
 ### Added

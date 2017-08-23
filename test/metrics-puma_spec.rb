@@ -17,13 +17,17 @@ describe PumaMetrics do
   end
 
   describe '#run' do
-    let(:args) {%w(--scheme test --auth-token 123 --control-url unix:///path)}
+    let(:args) {%W(--scheme test --auth-token 123 --control-url unix:///path #{additional_args})}
+    let(:additional_args) {''}
     let(:puma_ctl) {metric.puma_ctl}
+    let(:stats_output) {{}}
+    let(:gc_stats_output) {{}}
 
     before do
       allow(metric).to receive(:output)
       allow(metric).to receive(:ok)
       allow(puma_ctl).to receive(:stats) {stats_output}
+      allow(puma_ctl).to receive(:gc_stats) {gc_stats_output}
       metric.run
     end
 
@@ -95,6 +99,25 @@ describe PumaMetrics do
         end
       end
 
+    end
+
+    context 'gathering gc stats' do
+      let(:gc_stats_output) {{"heap_used" => 1516, "heap_length" => 1519}}
+
+      context 'without the `--gc-stats` flag' do
+        it "does not try to gather gc stats" do
+          expect(puma_ctl).to_not have_received(:gc_stats)
+        end
+      end
+
+      context 'with the `--gc-stats` flag' do
+        let(:additional_args) {'--gc-stats'}
+
+        it "outputs the gc stats with a 'gc' prefix" do
+          expect(metric).to output("test.gc.heap_used", 1516)
+          expect(metric).to output("test.gc.heap_length", 1519)
+        end
+      end
     end
   end
 
