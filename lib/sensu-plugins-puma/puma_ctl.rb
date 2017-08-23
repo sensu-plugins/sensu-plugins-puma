@@ -24,13 +24,13 @@ class PumaCtl
       return nil unless File.exist?(state_file)
       state = load_puma_state(state_file)
 
-      if state.has_key?('config')
+      if state.key?('config')
         # state is < v3.0.0
         opts = state['config']['options']
-        {control_url: opts[:control_url], control_auth_token: opts[:control_auth_token]}
+        { control_url: opts[:control_url], control_auth_token: opts[:control_auth_token] }
       else
         # state is >= v3.0.0
-        {control_url: state['control_url'], control_auth_token: state['control_auth_token']}
+        { control_url: state['control_url'], control_auth_token: state['control_auth_token'] }
       end
     end
   end
@@ -55,7 +55,7 @@ class PumaCtl
     when /^tcp:\/\//
       type = :tcp
       args = control_url.gsub('tcp://', '').split(':')
-    else 
+    else
       return nil
     end
 
