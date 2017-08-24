@@ -48,22 +48,24 @@ describe PumaMetrics do
             'phase' => 0,
             'booted_workers' => 2,
             'old_workers' => 0,
-            'worker_status' => [{
-              'pid' => 4122,
-              'index' => 1,
-              'phase' => 0,
-              'booted' => true,
-              'last_checkin' => '2017-08-23T01:44:00Z',
-              'last_status' => { 'backlog' => 0, 'running' => 2 }
-            },
-                                {
-                                  'pid' => 4126,
-                                  'index' => 0,
-                                  'phase' => 0,
-                                  'booted' => true,
-                                  'last_checkin' => '2017-08-23T01:44:01Z',
-                                  'last_status' => { 'backlog' => 1, 'running' => 1 }
-                                }]
+            'worker_status' => [
+              {
+                'pid' => 4122,
+                'index' => 1,
+                'phase' => 0,
+                'booted' => true,
+                'last_checkin' => '2017-08-23T01:44:00Z',
+                'last_status' => { 'backlog' => 0, 'running' => 2 }
+              },
+              {
+                'pid' => 4126,
+                'index' => 0,
+                'phase' => 0,
+                'booted' => true,
+                'last_checkin' => '2017-08-23T01:44:01Z',
+                'last_status' => { 'backlog' => 1, 'running' => 1 }
+              }
+            ]
           }
         end
 
