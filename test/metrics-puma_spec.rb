@@ -53,7 +53,7 @@ describe PumaMetrics do
               'index' => 1,
               'phase' => 0,
               'booted' => true,
-              'last_checkin' => '2017-08-23T01:44:01Z',
+              'last_checkin' => '2017-08-23T01:44:00Z',
               'last_status' => { 'backlog' => 0, 'running' => 2 }
             },
                                 {
@@ -78,14 +78,14 @@ describe PumaMetrics do
           expect(metric).to output('test.worker.1.pid', 4122)
           expect(metric).to output('test.worker.1.phase', 0)
           expect(metric).to output('test.worker.1.booted', true)
-          expect(metric).to output('test.worker.1.last_checkin', '2017-08-23T01:44:01Z')
+          expect(metric).to output('test.worker.1.last_checkin', 1_503_452_640)
           expect(metric).to output('test.worker.1.backlog', 0)
           expect(metric).to output('test.worker.1.running', 2)
 
           expect(metric).to output('test.worker.0.pid', 4126)
           expect(metric).to output('test.worker.0.phase', 0)
           expect(metric).to output('test.worker.0.booted', true)
-          expect(metric).to output('test.worker.0.last_checkin', '2017-08-23T01:44:01Z')
+          expect(metric).to output('test.worker.0.last_checkin', 1_503_452_641)
           expect(metric).to output('test.worker.0.backlog', 1)
           expect(metric).to output('test.worker.0.running', 1)
         end
