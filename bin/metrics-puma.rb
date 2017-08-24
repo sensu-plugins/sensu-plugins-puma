@@ -104,6 +104,7 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
       backlog += (worker['backlog'] = last_status['backlog'])
       running += (worker['running'] = last_status['running'])
       worker.map do |k, v|
+        v = Time.parse(v).to_i if k == 'last_checkin'
         metrics["worker.#{idx}.#{k}"] = v
       end
     end
