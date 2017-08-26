@@ -6,6 +6,10 @@ class PumaMetrics
   at_exit do
     @@autorun = false
   end
+
+  def ok(*)
+    'ok'
+  end
 end
 
 describe PumaMetrics do
@@ -31,7 +35,6 @@ describe PumaMetrics do
 
     before do
       allow(metric).to receive(:output)
-      allow(metric).to receive(:ok)
       allow(puma_ctl).to receive(:stats) { stats_output }
       allow(puma_ctl).to receive(:gc_stats) { gc_stats_output }
       metric.run
