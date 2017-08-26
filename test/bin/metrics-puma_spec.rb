@@ -4,7 +4,9 @@ require 'pry'
 
 class PumaMetrics
   at_exit do
+    # rubocop:disable Style/ClassVars
     @@autorun = false
+    # rubocop:enable Style/ClassVars
   end
 
   def ok(*)
