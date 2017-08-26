@@ -2,6 +2,12 @@ require_relative './spec_helper'
 require_relative '../bin/metrics-puma'
 require 'pry'
 
+class PumaMetrics
+  at_exit do
+    @@autorun = false
+  end
+end
+
 describe PumaMetrics do
   subject(:metric) { PumaMetrics.new(args) }
   let(:args) {}
