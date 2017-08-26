@@ -1,5 +1,5 @@
-require_relative './spec_helper'
-require_relative '../bin/metrics-puma'
+require_relative '../spec_helper'
+require_relative '../../bin/metrics-puma'
 require 'pry'
 
 class PumaMetrics
