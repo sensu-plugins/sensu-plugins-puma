@@ -70,6 +70,17 @@ describe PumaCtl do
       it 'returns the JSON socket response as a hash' do
         expect(puma_ctl.gc_stats).to eq('heap_used' => 1516)
       end
+
+      context 'when `gc-stats` is not supported' do
+        before do
+          allow(socket).to receive(:print)
+        end
+
+        it 'raises an error' do
+          allow(socket).to receive(:read).and_return("HTTP/1.0 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 18\r\n\r\nUnsupported action")
+          expect { puma_ctl.gc_stats }.to raise_error(PumaCtl::UnknownCommand, 'gc-stats')
+        end
+      end
     end
 
     context 'with a UNIX socket control url' do
@@ -87,6 +98,17 @@ describe PumaCtl do
 
       it 'returns the JSON socket response as a hash' do
         expect(puma_ctl.gc_stats).to eq('heap_used' => 1516)
+      end
+
+      context 'when `gc-stats` is not supported' do
+        before do
+          allow(socket).to receive(:print)
+        end
+
+        it 'raises an error' do
+          allow(socket).to receive(:read).and_return("HTTP/1.0 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 18\r\n\r\nUnsupported action")
+          expect { puma_ctl.gc_stats }.to raise_error(PumaCtl::UnknownCommand, 'gc-stats')
+        end
       end
     end
   end

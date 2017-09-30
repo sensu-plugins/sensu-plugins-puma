@@ -78,7 +78,11 @@ class PumaMetrics < Sensu::Plugin::Metric::CLI::Graphite
 
     metrics.merge!(stats)
 
-    metrics = parse_gc_stats(metrics, puma_ctl.gc_stats) if config[:gc_stats]
+    begin
+      metrics = parse_gc_stats(metrics, puma_ctl.gc_stats) if config[:gc_stats]
+    rescue PumaCtl::UnknownCommand
+      unknown 'Control server does not support the `gc-stats` command'
+    end
 
     metrics.map do |k, v|
       output "#{config[:scheme]}.#{k}", v, timestamp

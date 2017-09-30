@@ -3,6 +3,8 @@ require 'socket'
 require 'yaml'
 
 class PumaCtl
+  class UnknownCommand < StandardError; end
+
   attr_reader :state_file
 
   def initialize(state_file: '/tmp/puma.state', control_auth_token: nil, control_url: nil)
@@ -73,7 +75,9 @@ class PumaCtl
   def send_socket_command(cmd)
     out = control_socket do |socket|
       socket.print("GET /#{cmd}?token=#{control_auth_token} HTTP/1.0\r\n\r\n")
-      socket.read
+      result = socket.read
+      raise UnknownCommand, cmd if result =~ /^HTTP\/1.0 404/
+      result
     end
     JSON.parse(out.split("\r\n").last)
   end
