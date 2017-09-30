@@ -1,19 +1,25 @@
 # Change Log
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
+This CHANGELOG follows the format listed listed [here](https://github.com/sensu-plugins/community/blob/master/HOW_WE_CHANGELOG.md)
 
 ## [Unreleased]
 
 ### Breaking Change
 - updated `sensu-plugin` dependency to 2.x (@majormoses)
 
+### Changed
+- updated changelog guideline location (@majormoses)
+
+### Fixed
+- pr template spelling (@majormoses)
+
 ### Added
-- Support for Puma v3 state files
-- Parsing of stats output with multiple workers
-- Ability to pass `--control-url` and `--auth-token` directly instead of state file
-- Support for connecting to control servers running on TCP ports
-- Add `--gc-stats` flag to allow collecting GC stats
+- Support for Puma v3 state files (@dnd)
+- Parsing of stats output with multiple workers (@dnd)
+- Ability to pass `--control-url` and `--auth-token` directly instead of state file (@dnd)
+- Support for connecting to control servers running on TCP ports (@dnd)
+- Add `--gc-stats` flag to allow collecting GC stats (@dnd)
 
 ### Removed
 - Dependency on `puma`
