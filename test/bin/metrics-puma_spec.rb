@@ -18,6 +18,11 @@ describe PumaMetrics do
   subject(:metric) { PumaMetrics.new(args) }
   let(:args) {}
 
+  before do
+    allow(metric).to receive(:output)
+    allow(metric).to receive(:unknown)
+  end
+
   context 'with options' do
     let(:args) { %w(--state-file /some/file.state --auth-token 123 --control-url unix:///some/path) }
 
@@ -36,7 +41,6 @@ describe PumaMetrics do
     let(:gc_stats_output) { {} }
 
     before do
-      allow(metric).to receive(:output)
       allow(puma_ctl).to receive(:stats) { stats_output }
       allow(puma_ctl).to receive(:gc_stats) { gc_stats_output }
       metric.run
@@ -132,6 +136,22 @@ describe PumaMetrics do
           expect(metric).to output('test.gc.heap_length', 1519)
         end
       end
+    end
+  end
+
+  describe '#run with `--gc-stats` flag unsupported' do
+    let(:args) { %W(--scheme test --auth-token 123 --control-url unix:///path #{additional_args}) }
+    let(:additional_args) { '--gc-stats' }
+    let(:puma_ctl) { metric.puma_ctl }
+
+    before do
+      allow(puma_ctl).to receive(:stats).and_return({})
+      allow(puma_ctl).to receive(:gc_stats).and_raise(PumaCtl::UnknownCommand)
+      metric.run
+    end
+
+    it 'emits "unknown"' do
+      expect(metric).to have_received(:unknown).with('Control server does not support the `gc-stats` command')
     end
   end
 
